@@ -40,6 +40,7 @@ print(round(landingOffset)).
 wait until trueRadar < burnHeight.
 lock throttle to throttlePID.
 when impactTime <= 3 then {gear on.}.
+if ship:position = 
 wait until ship:verticalspeed <= -.01.
 lock throttle to 0.
 print("Hover Slam Complete").

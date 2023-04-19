@@ -25,7 +25,19 @@ wait until alt:apoapsis >= 10000.
 lock throttle to 0.
 rcs on.
 
-//Landing
+//Landing Prep
 wait until ship:verticalspeed <= -1.
-toggle brakes. 
-lock landingVector to landingTarget:ALTITUDEPOSITION(max(landingTarget:TERRAINHEIGHT, 0) + ALTITUDE * 1.30).
+toggle brakes.
+lock landingOffset to landingTarget - ship:position. 
+lock steering to latlng(landingOffset).
+print(round(landingOffset)).
+
+//Hover slam
+wait until trueRadar < burnHeight.
+lock throttle to throttlePID.
+when impactTime <= 3 then {gear on.}.
+wait until ship:verticalspeed <= -.01.
+lock throttle to 0.
+print("Hover Slam Complete").
+rcs off.
+brakes off.

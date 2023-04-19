@@ -5,7 +5,7 @@ lock g to constant:g * body:mass / body:radius^2. //Get current planet gravity i
 lock maxThrottle to (ship:availablethrust / ship:mass) - g. //Max trust ever needed
 lock burnHeight to ship:verticalspeed^2 / (2* maxThrottle). //Needed Height for Hover slam
 lock throttlePID to burnHeight / trueRadar. //Throttle required to make a soft landing
-lock impactTime to trueRadar / abs(ship:verticalspeed).
+lock impactTime to trueRadar / abs(ship:verticalspeed). //At what time should we burn :|
 
 lock landingTarget to latlng(0,0). //Landing pad Lat/Lng
 
@@ -13,6 +13,10 @@ lock landingTarget to latlng(0,0). //Landing pad Lat/Lng
 create(Lauch.log).
 log "Starting Lat" + landingTarget:lat to Lauch.log.
 log "Starting Lng" + landingTarget:lng to Lauch.log.
+brakes off.
+rcs off.
+gear off.
+panels off.
 
 //Launch
 wait until ag1.

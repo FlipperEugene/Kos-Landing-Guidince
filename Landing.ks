@@ -2,17 +2,41 @@ print(ADDONS:TR:AVAILABLE). //Checking if Correct mods are downloaded
 set gearoffset to 7. //Height of rocket on the ground when gear is down
 lock trueRadar to alt:radar - gearoffset. //Getting distance from gear to ground
 lock g to constant:g * body:mass / body:radius^2. //Get current planet gravity in ms^2
-lock maxThrottle to (ship:availablethrust / ship:mass) - g. //Max trust ever needed
+lock maxThrottle to (ship:availablethrust / ship:mass) - g. //Max thrust ever needed
 lock burnHeight to ship:verticalspeed^2 / (2* maxThrottle). //Needed Height for Hover slam
 lock throttlePID to burnHeight / trueRadar. //Throttle required to make a soft landing
 lock impactTime to trueRadar / abs(ship:verticalspeed). //At what time should we burn :|
+set landingTarget to latlng(0,0). //Landing pad Lat/Lng
+lock aoa to 32.
+//
+function getImpact {
+    if addons:tr:hasimpact { return addons:tr:impactpos. }         
+        return ship:geoposition.
+}
+function lngError {                                    
+    return getImpact():lng - landingTarget:lng.
+}
+function latError {
+    return getImpact():lat - landingTarget:lat.
+}
 
-lock landingTarget to latlng(0,0). //Landing pad Lat/Lng
+function errorVector {
+    return getImpact():position - landingTarget:position.
+}
 
+function getSteering {            
+    local errorVector is errorVector().
+        local velVector is -ship:velocity:surface.
+        local result is velVector + errorVector*1.
+        if vang(result, velVector) > aoa
+        {
+            set result to velVector:normalized
+                          + tan(aoa)*errorVector:normalized.
+        }
+
+        return lookdirup(result, facing:topvector).
+    }
 //Launch Prep
-create(Lauch.log).
-log "Starting Lat" + landingTarget:lat to Lauch.log.
-log "Starting Lng" + landingTarget:lng to Lauch.log.
 brakes off.
 rcs off.
 gear off.
@@ -32,15 +56,15 @@ rcs on.
 //Landing Prep
 wait until ship:verticalspeed <= -1.
 toggle brakes.
-lock landingOffset to landingTarget - ship:position. 
-lock steering to latlng(landingOffset).
-print(round(landingOffset)).
+lock steering to latlng(getSteering()).
+
 
 //Hover slam
 wait until trueRadar < burnHeight.
 lock throttle to throttlePID.
+gui:addlabel:text(throttlePID).
+lock aoa to -6.
 when impactTime <= 3 then {gear on.}.
-if ship:position = 
 wait until ship:verticalspeed <= -.01.
 lock throttle to 0.
 print("Hover Slam Complete").

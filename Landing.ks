@@ -8,7 +8,7 @@ lock throttlePID to burnHeight / trueRadar. //Throttle required to make a soft l
 lock impactTime to trueRadar / abs(ship:verticalspeed). //At what time should we burn :|
 set landingTarget to latlng(0,0). //Landing pad Lat/Lng
 lock aoa to 32.
-//
+//This script was made by 3dprinted1, https://www.youtube.com/channel/UC9VmsrN53RzjX8ests54s6Q
 function getImpact {
     if addons:tr:hasimpact { return addons:tr:impactpos. }         
         return ship:geoposition.
@@ -69,4 +69,3 @@ wait until ship:verticalspeed <= -.01.
 lock throttle to 0.
 print("Hover Slam Complete").
 rcs off.
-brakes off.

@@ -64,7 +64,7 @@ wait until trueRadar < burnHeight.
 lock throttle to throttlePID.
 gui:addlabel:text(throttlePID).
 lock aoa to -6.
-when impactTime <= 3 then {gear on.}.
+when impactTime <= 3 then {gear on. lock aoa to -3.}.
 wait until ship:verticalspeed <= -.01.
 lock throttle to 0.
 print("Hover Slam Complete").

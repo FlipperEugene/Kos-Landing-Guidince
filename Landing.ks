@@ -20,11 +20,11 @@ function latError {
     return getImpact():lat - landingTarget:lat.
 }
 
-function errorVector {
+function errorVector {      //the rocket knows where it is by knowing where it isnt, it subracts where it needs to be is by where it isnt.
     return getImpact():position - landingTarget:position.
 }
 
-function getSteering {            
+function getSteering {        //by taking where the rocket isnt and where the landing pad is, we are able to calculate where it needs to be.
     local errorVector is errorVector().
         local velVector is -ship:velocity:surface.
         local result is velVector + errorVector*1.
@@ -63,8 +63,8 @@ lock steering to latlng(getSteering()).
 wait until trueRadar < burnHeight.
 lock throttle to throttlePID.
 gui:addlabel:text(throttlePID).
-lock aoa to -6.
-when impactTime <= 3 then {gear on. lock aoa to -3.}.
+lock aoa to -3.
+when impactTime <= 3 then {gear on. lock aoa to -1.}.
 wait until ship:verticalspeed <= -.01.
 lock throttle to 0.
 print("Hover Slam Complete").

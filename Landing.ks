@@ -7,7 +7,9 @@ lock burnHeight to ship:verticalspeed^2 / (2* maxThrottle). //Needed Height for 
 lock throttlePID to burnHeight / trueRadar. //Throttle required to make a soft landing
 lock impactTime to trueRadar / abs(ship:verticalspeed). //At what time should we burn :|
 set landingTarget to latlng(0,0). //Landing pad Lat/Lng
+set TestHeight to 1000. //desired height for the test.
 lock aoa to 32.
+switch to 0.
 //This script was made by 3dprinted1, https://www.youtube.com/channel/UC9VmsrN53RzjX8ests54s6Q
 function getImpact {
     if addons:tr:hasimpact { return addons:tr:impactpos. }         
@@ -35,25 +37,21 @@ function getSteering {        //by taking where the rocket isnt and where the la
         }
 
         return lookdirup(result, facing:topvector).
+        
     }
-//Launch Prep
-brakes off.
-rcs off.
-gear off.
-panels off.
 
-//Launch
-wait until ag1.
+
+//Acent Prep
+if ag10 {toggle gear.}.
+
+//Acent
 lock throttle to 1.
-stage.
 lock steering to up.
+wait .5.
+stage.
+wait until alt:radar >= TestHeight.
 
-//Ascent 
-wait until alt:apoapsis >= 10000.
-lock throttle to 0.
-rcs on.
-
-//Landing Prep
+//Landing Prepgb
 wait until ship:verticalspeed <= -1.
 toggle brakes.
 lock steering to latlng(getSteering()).
@@ -62,10 +60,13 @@ lock steering to latlng(getSteering()).
 //Hover slam
 wait until trueRadar < burnHeight.
 lock throttle to throttlePID.
-gui:addlabel:text(throttlePID).
-lock aoa to -3.
+print"Impact Time: "+impactTime at(0,10).
+print"Error Vector: "+errorVector at(0,10).
+print"Burn Height: "+burnHeight at(0,10).
+lock aoa to -6.
 when impactTime <= 3 then {gear on. lock aoa to -1.}.
 wait until ship:verticalspeed <= -.01.
 lock throttle to 0.
 print("Hover Slam Complete").
 rcs off.
+ag10 on.
